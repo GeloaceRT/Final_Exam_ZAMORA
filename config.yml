@@ -1,0 +1,30 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: update repository index / install Updates (CentOS)
+    tags: always
+    yum:
+      name: "*"
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "CentOS"
+
+  - name: update repository index / install Updates (Ubuntu)
+    tags: always
+    apt:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Ubuntu"
+
+  - name: motd player
+    copy: 
+        content: "Ansible Managed by Zamora\n"
+        dest: /etc/motd
+
+- hosts: all
+  become: true
+  roles:
+      - prometheus
+      - apache2
